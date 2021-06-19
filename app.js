@@ -1,44 +1,38 @@
-const youtubeApi = require("./api");
+const Discord = require("discord.js");
+const { discord_token, prefix } = require("./config.json");
+const { execute, play, skip } = require("./functions/excute");
 
-const getYouTubeData = async (term) => {
-  let videoInfo = "";
-  try {
-    videoInfo = await youtubeApi.search(term);
-  } catch (error) {
-    /* api key 가 할당량 다썻을떄 랜덤으로 다시..  */
-    videoInfo = await youtubeApi.search(term);
-  }
+const app = new Discord.Client();
 
-  /* get vidoe ID */
-  const {
-    id: { videoId },
-  } = videoInfo.data.items[0];
+app.login(discord_token);
+app.on("ready", () => {
+  console.log("discord bot login!");
+});
 
-  /* get vidoe Title , thumbnail*/
-  let videoDetail = await youtubeApi.videos(videoId, "snippet");
-  const {
-    snippet: { title, thumbnails },
-  } = videoDetail.data.items[0];
-
-  /* 섬네일중 가장큰 섬네일의 url 을 가져옴. */
-  let thumbnail = "";
-  if (thumbnails.maxres !== undefined) {
-    thumbnail = thumbnails.maxres.url;
-  } else if (thumbnails.high !== undefined) {
-    thumbnail = thumbnails.high.url;
-  } else if (thumbnails.medium !== undefined) {
-    thumbnail = thumbnails.medium.url;
+app.on("message", async (msg) => {
+  if (msg.author.bot) return;
+  if (!msg.content.startsWith(prefix)) return;
+  if (msg.content.startsWith(`${prefix}play`) || msg.content.startsWith(`${prefix}p`)) {
+    if (msg.member.voice.channel) {
+      const playCommand = msg.content.split(" ")[0];
+      const userName = msg.author.username;
+      if (playCommand === `${prefix}p`) {
+        msg.delete({ timeout: 0 });
+        execute(msg.content.split(`${prefix}p `)[1], msg, userName);
+      } else {
+        msg.delete({ timeout: 0 });
+        execute(msg.content.split(`${prefix}play `)[1], msg, userName);
+      }
+    } else {
+      msg.delete({ timeout: 1350 });
+      msg.channel
+        .send("voice channel join!")
+        .then((joinMsg) => setTimeout(() => joinMsg.delete(), 10000));
+    }
+  } else if (msg.content.startsWith(`${prefix}skip`) || msg.content.startsWith(`${prefix}s`)) {
+    msg.delete({ timeout: 0 });
+    skip(msg);
   } else {
-    thumbnail = thumbnails.default.url;
+    return;
   }
-
-  /* return youtube data ...  */
-  return { videoId, title, thumbnail };
-};
-
-const main = async () => {
-  const youtubeData = await getYouTubeData("EGOIST x M2U – 絶体絶命 (Zettai Zetsumei)");
-  console.log(youtubeData);
-};
-//main()
-
+});
