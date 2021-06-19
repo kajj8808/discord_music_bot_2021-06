@@ -1,7 +1,13 @@
-# discord_music_bot_2021-06
-  discord music bot 2021-06
+# discordMusicBot
+[NodeJsVersion 14.15.4](https://nodejs.org)
 
-## function
-  - [ ] skip
-  - [ ] play
+discordMusicBot(only JavaScript)
 
+## Commad
+- [x] play (url , search)
+- [x] skip
+
+## Config 
+[Discord Get Token](https://discord.com/developers/applications/)
+
+[YouTube Data Api v3](https://console.developers.google.com/apis/credentials)
