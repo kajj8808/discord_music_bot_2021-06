@@ -1,4 +1,6 @@
 {
     "regionCode" : "KR",
-    "apiKey" : "youtube data v3 api key here"
+    "apiKey" : "youtube data v3 api key here",
+    "discord_token" : "discord token here",
+    "prefix" : "!"
 }
